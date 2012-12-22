@@ -1,4 +1,4 @@
-import os
+import os, shutil
 
 class FileLike:
 	_pos = 0
@@ -21,3 +21,6 @@ class FileLike:
 
 	def tell(self):
 		return self._file.tell()
+	
+	def copy(self, destination):
+		shutil.copyfileobj(self, open(destination, "wb"), 4096)
