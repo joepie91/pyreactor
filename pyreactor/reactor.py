@@ -31,7 +31,12 @@ class Reactor:
 		
 		for stream in writable:
 			fileno = stream.fileno()
-			obj = self.objmap[fileno]
+			
+			try:
+				obj = self.objmap[fileno]
+			except KeyError, e:
+				# The client has disconnected. Skip to the next stream.
+				continue
 			
 			if obj.objtype == "client":
 				obj._write_cycle()
