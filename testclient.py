@@ -27,3 +27,6 @@ class TestClient(pyreactor.BaseClient):
 		stream.copy("test.dat")
 		print "Exiting..."
 		self.reactor.stop()
+	
+	def event_disconnected(self):
+		print "Client disconnected."
