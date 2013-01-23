@@ -13,4 +13,4 @@ def main():
 	reactor.add(c)
 	reactor.loop()
 
-profile.run("main()")
+profile.run("main()", None, "time")

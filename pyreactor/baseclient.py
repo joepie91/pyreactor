@@ -1,6 +1,5 @@
 import socket, ssl, msgpack, tempfile, os
 from collections import deque
-from bitstring import BitArray
 from filelike import FileLike
 
 class BaseClient:
@@ -59,17 +58,27 @@ class BaseClient:
 		self.stream.send(chunk)
 	
 	def _encode_header(self, chunktype, size, channel):
-		header_type = BitArray(uint=chunktype, length=7)
-		header_size = BitArray(uint=size, length=25)
-		header_channel = BitArray(uint=channel, length=24)
-		header = header_type + header_size + header_channel
-		return header.bytes
+		bits = ""
+		bits += bin(chunktype)[2:].zfill(7)
+		bits += bin(size)[2:].zfill(25)
+		bits += bin(channel)[2:].zfill(24)
+		
+		header = b""
+		
+		for i in xrange(0, 7):
+			header += chr(int(bits[i*8:(i+1)*8], 2))
+		
+		return header
 	
 	def _decode_header(self, header):
-		bits = BitArray(bytes=header)   # 7 byte chunk header
-		chunktype = bits[:7].uint   # Bits 0-6 inc
-		chunksize = bits[7:32].uint # Bits 7-31 inc
-		channel = bits[32:56].uint  # Bits 32-55 inc
+		bits = ""
+		
+		for i in xrange(0, len(header)):
+			bits += bin(ord(header[i]))[2:].zfill(8)
+		
+		chunktype = int(bits[:7], 2)	# Bits 0-6 inc
+		chunksize = int(bits[7:32], 2)	# Bits 7-31 inc
+		channel = int(bits[32:56], 2)	# Bits 32-55 inc
 		
 		return (chunktype, chunksize, channel)
 	
