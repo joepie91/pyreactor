@@ -1,4 +1,3 @@
-from bitstring import BitArray
 import select, msgpack
 
 class ReactorException(Exception):

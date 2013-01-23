@@ -1,6 +1,8 @@
 import pyreactor, time
 
 class TestClient(pyreactor.BaseClient):
+	chunk_size = 8192
+	
 	def event_receive(self, data):
 		print "Received message: %s" % repr(data)
 	
